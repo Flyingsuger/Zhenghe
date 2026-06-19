@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>整合营销传播 - 期末抽背通关神器</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-main: #f3f4f6;
+            --text-dark: #1f2937;
+            --text-light: #4b5563;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* 进度条 */
+        .global-progress {
+            margin-top: 15px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            height: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .global-progress-bar {
+            background: linear-gradient(90deg, #6366f1, #10b981);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* 章节选择面板 */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        @media(min-width: 640px) {
+            .menu-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .chapter-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+        }
+
+        .chapter-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .chapter-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 15px;
+        }
+
+        .badge {
+            background: #e0e7ff;
+            color: var(--primary);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        /* 背诵主界面 */
+        .quiz-view {
+            display: none;
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .back-btn {
+            background: #f3f4f6;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--text-light);
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .card-box {
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: #f9fafb;
+            border: 1px dashed #d1d5db;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .hint-text {
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .answer-area {
+            width: 100%;
+            display: none;
+            border-top: 2px solid #e5e7eb;
+            margin-top: 15px;
+            padding-top: 15px;
+            color: var(--text-dark);
+        }
+
+        .answer-content {
+            font-size: 1.05rem;
+            text-align: left;
+            width: 100%;
+        }
+
+        /* 高亮标记 */
+        .highlight {
+            color: var(--danger);
+            font-weight: bold;
+            border-bottom: 2px solid var(--danger);
+            padding: 0 2px;
+        }
+        
+        .subhighlight {
+            color: #0284c7;
+            font-weight: bold;
+        }
+
+        /* 控制按钮 */
+        .control-btns {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn {
+            flex: 1;
+            max-width: 200px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            text-align: center;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-show {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-show:hover { background: var(--primary-hover); }
+
+        .btn-wrong {
+            background: #fef2f2;
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+
+        .btn-wrong:hover { background: #fee2e2; }
+
+        .btn-correct {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-correct:hover { background: #059669; }
+
+        /* 完成通关页面 */
+        .victory-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .victory-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* 列表/全览模式 */
+        .view-all-container {
+            margin-top: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .view-all-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .all-list {
+            display: none;
+            max-height: 500px;
+            overflow-y: auto;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 15px;
+        }
+
+        .list-item {
+            padding: 12px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.95rem;
+        }
+
+        .list-item strong {
+            color: var(--primary);
+        }
+
+        /* 辅助工具栏 */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .tool-btn {
+            background: #e5e7eb;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .tool-btn:hover {
+            background: #d1d5db;
+            color: var(--text-dark);
+        }
+
+        /* 表格样式支持 */
+        table.inner-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        table.inner-table th, table.inner-table td {
+            border: 1px solid #d1d5db;
+            padding: 6px 10px;
+            text-align: left;
+        }
+        table.inner-table th {
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🎓 整合营销传播</h1>
+        <p>期末高分通关抽背系统 · 科学避坑 · 100%知识点不遗漏</p>
+        <div class="global-progress">
+            <div id="globalProgressBar" class="global-progress-bar"></div>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-light); margin-top: 5px; text-align: right;">
+            总进度: <span id="globalPercent">0%</span> (已消灭 <span id="globalChecked">0</span>/<span id="globalTotal">0</span> 个考点)
+        </div>
+    </header>
+
+    <div class="toolbar">
+        <button class="tool-btn" onclick="resetAllProgress()">🔄 重置所有进度</button>
+        <button class="tool-btn" onclick="toggleListView()">📋 考点速览/查找模式</button>
+    </div>
+
+    <!-- 1. 章节选择菜单 -->
+    <div id="menuView" class="menu-grid">
+        <!-- 动态生成 -->
+    </div>
+
+    <!-- 2. 背诵主界面 -->
+    <div id="quizView" class="quiz-view">
+        <div class="quiz-header">
+            <button class="back-btn" onclick="exitQuiz()">⬅️ 返回主单</button>
+            <span id="quizChapterTitle" style="font-weight: bold; color: var(--primary);">章节名称</span>
+            <span id="quizProgressCount" style="font-size: 0.9rem; color: var(--text-light);">1/10</span>
+        </div>
+
+        <!-- 进度条 -->
+        <div class="global-progress" style="height: 6px; margin-bottom: 20px;">
+            <div id="chapterProgressBar" class="global-progress-bar" style="background: var(--success);"></div>
+        </div>
+
+        <!-- 卡片主体 -->
+        <div class="card-box" id="cardBox">
+            <div id="cardContent">
+                <p id="questionText" class="question-text">质的研究的四大特征是什么？</p>
+                <p id="hintText" class="hint-text">点击下方按钮显示核心答案</p>
+            </div>
+            
+            <div id="answerArea" class="answer-area">
+                <div id="answerContent" class="answer-content">
+                    <!-- 动态注入答案内容 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 交互按钮 -->
+        <div class="control-btns">
+            <button id="btnShow" class="btn btn-show" onclick="revealAnswer()">👀 显示答案</button>
+            <button id="btnWrong" class="btn btn-wrong" style="display:none;" onclick="handleAnswerFeedback(false)">❌ 没记住 / 模糊</button>
+            <button id="btnCorrect" class="btn btn-correct" style="display:none;" onclick="handleAnswerFeedback(true)">✅ 妥妥记住了</button>
+        </div>
+    </div>
+
+    <!-- 3. 完美通关界面 -->
+    <div id="victoryView" class="victory-screen">
+        <div class="victory-icon">🎉</div>
+        <h2 style="color: var(--success); margin-bottom: 10px;">本章大获全胜！</h2>
+        <p style="color: var(--text-light); margin-bottom: 25px;">太棒了，你已经 100% 啃下了本章节的所有考点！</p>
+        <button class="btn btn-show" onclick="exitQuiz()">挑战其他章节</button>
+    </div>
+
+    <!-- 4. 考点速览/查找列表 -->
+    <div id="listViewContainer" class="view-all-container" style="display: none;">
+        <div class="view-all-header" onclick="toggleListViewDetail()">
+            <h3 style="color: var(--text-dark);">🔍 考点检索全览表 (点击展开/折叠)</h3>
+            <span id="arrowIcon">▼</span>
+        </div>
+        <div id="allList" class="all-list">
+            <!-- 动态载入列表 -->
+        </div>
+    </div>
+</div>
+
+<script>
+// ==================== 100% 完整无遗漏考点数据库 ====================
+
+
+const DATABASE = [
+    {
+        id: 1,
+        chapter: "第一章 整合营销传播导论",
+        question: "商业的本质是什么？",
+        answer: `商业的本质是<span class="highlight">交易（交换）</span>。`
+    },
+    {
+        id: 2,
+        chapter: "第一章 整合营销传播导论",
+        question: "什么是【交易成本】？其产生原因及分类有哪些？（考核要求：需记忆并会分析案例）",
+        answer: `1. <span class="highlight">交易成本</span>：是为克服交易阻力而付出的代价。<br>
+                 2. <span class="highlight">产生原因</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">信息不对称</span><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">信用不传递</span><br>
+                 3. <span class="highlight">具体类型</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">第一类「购前」</span>：包括搜寻成本、比较成本、测试成本。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">第二类「购中」</span>：包括协商成本、付款成本。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">第三类「购后」</span>：包括运输成本、售后成本。`
+    },
+    {
+        id: 3,
+        chapter: "第一章 整合营销传播导论",
+        question: "什么是【连接】？它如何降低交易成本？",
+        answer: `1. <span class="highlight">连接的作用</span>：提高连接的密度，降低交易成本。<br>
+                 2. <span class="highlight">空间折叠</span>：因为连接的进步，两个远隔天涯的节点，站在彼此面前（如：铁路、互联网）。<br>
+                 3. <span class="highlight">时间坍缩</span>：因为连接的进步，两个先后出现的节点，跨越时间握手（如：电话）。`
+    },
+    {
+        id: 4,
+        chapter: "第一章 整合营销传播导论",
+        question: "常见的【商业模式类型】有哪些？",
+        answer: `商业模式的发展经历了以下五种类型：<br>
+                 1. <span class="highlight">原始社会</span><br>
+                 2. <span class="highlight">小农经济</span><br>
+                 3. <span class="highlight">现代性商业</span><br>
+                 4. <span class="highlight">中心型商业</span><br>
+                 5. <span class="highlight">去中心型商业</span>`
+    },
+    {
+        id: 5,
+        chapter: "第一章 整合营销传播导论",
+        question: "【护城河】有哪些类型？各自的具体含义是什么？",
+        answer: `护城河主要有以下四种类型：<br>
+                 1. <span class="highlight">第一类：无形资产</span>：包括专利、许可和品牌。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">许可</span>：获得进入不允许自由竞争的市场的资格，即“我能做，但你不能做的事情”（如：独家代理权）。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">品牌</span>：降低了消费者在“比较成本”等方面的交易成本，是通过时间积累下来的堡垒。<br>
+                 2. <span class="highlight">第二类：成本优势</span>：包括规模和管理。在同样的条件下，以更低成本生产相同的产品，就拥有定价权。降低途径包括：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">降低固定成本</span>（如降低生产线的投入）<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">降低变动成本</span>（如降低原料采购价格）<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">提升销售规模</span><br>
+                 3. <span class="highlight">第三类：网络效应</span>：包括用户和生态。产品的用户越多，这个产品对企业的价值就越大。<br>
+                 4. <span class="highlight">第四类：迁移成本</span>：包括习惯和资产，旨在防止用户流失。包含：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">使用习惯</span>：和用户建立良好的关系，让用户离不开你。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">用户资产</span>：如会员积分、特权等也是防止用户流失的重要部分。`
+    },
+    {
+        id: 6,
+        chapter: "第一章 整合营销传播导论",
+        question: "什么是【整合营销传播（IMC）】的定义、核心及核心定义？（备考提示：该项主要结合案例分析考）",
+        answer: `1. <span class="highlight">定义</span>：整个营销过程中的每一环节都在与消费者沟通，让消费者了解“这项产品的价值”以及它是“为什么样的人而设计的”；整合协调所有能够“影响消费者决策过程”的“营销活动”及“其它讯息来源”与消费者进行互动的沟通，融入、说服客户和潜在消费者，跟消费者建立长期关系。<br>
+                 2. <span class="highlight">核心</span>：将与企业进行“市场营销”所“有关的一切活动”一元化，并不断的优化调整，持续满足用户的需求。<br>
+                 3. <span class="highlight">核心定义</span>：<span class="subhighlight">营销传播一体化</span>（上面的两点任意一个都可以）。<br>
+                 ※ <b>备考重要提示</b>：该题目通常不在简答题直接考，而是会作为大分值「案例分析题」的综合落脚点，考察如何结合案例总结和提炼什么是整合营销传播。`
+    },
+    {
+        id: 7,
+        chapter: "第一章 整合营销传播导论",
+        question: "什么是创造价值的公式？什么是管理认知？",
+        answer: `1. <span class="highlight">创造价值公式</span>：<br>
+                 <span class="subhighlight">产品价值 = 功能价值 + 情绪价值 + 资产价值</span><br>
+                 2. <span class="highlight">管理认知</span>：向消费者传递三种价值，形成认知共识，整合产品、价格、渠道与媒体，建立品牌。`
+    },
+    {
+        id: 8,
+        chapter: "第一章 整合营销传播导论",
+        question: "什么是【推广工具整合】？它包含了哪些推广工具的定义？",
+        answer: `1. <span class="highlight">推广工具整合的定义</span>：指企业把广告、促销、人员推销、直效行销与公共关系等工具加以搭配使用，以达到最佳推广效果。<br>
+                 2. <span class="highlight">各核心推广工具的定义</span>（详见第七章）：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">广告</span>：由赞助者付费，透过大众媒体向目标对象传递讯息的单向沟通方式。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">促销</span>：利用折扣、赠品、抽奖等短期诱因，刺激消费者迅速购买的推广方式。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">人员推销</span>：由销售人员与顾客面对面沟通，并即时回应需求的推广方式。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">事件营销</span>：打造有新闻价值、传播价值的事件，让大众和媒体愿意主动传播。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">公共关系</span>：是透过赞助、公益活动、新闻报道等方式来建立与维护组织良好形象的推广方式。`
+    },
+    {
+        id: 9,
+        chapter: "第一章 整合营销传播导论",
+        question: "什么是【媒体工具整合】？",
+        answer: `传播媒介的整合是指企业把<span class="highlight">不同媒体工具统一搭配运用</span>，以传递一致讯息、塑造一致形象，并达到品牌、销售与声誉效果。（例如：电视媒体、报纸媒体、杂志媒体、广播媒体等）`
+    },
+    {
+        id: 10,
+        chapter: "第一章 整合营销传播导论",
+        question: "什么是【IMC实务架构】？",
+        answer: `1. <span class="highlight">理解真需求</span>：营销的基本前提（真需求的任务：痛点、痒点、爽点）。<br>
+                 2. <span class="highlight">创造新价值</span>：营销的本质工作（产品、价格、渠道、推广等）。<br>
+                 3. <span class="highlight">管理深共识</span>：营销的重要手段（推广工具整合、媒介的整合）。<br>
+                 4. <span class="highlight">建立强关系</span>：营销的终极目标（内容营销）。`
+    },
+    {
+        id: 11,
+        chapter: "第二章 受众认知与心理",
+        question: "目标受众的认知行为规律有哪些？",
+        answer: `1. <span class="highlight">先激发需求，再产生购买决策</span>：没有需求就没有决策，激发需求是最重要的。<span class="subhighlight">（核心手段：场景造需）</span><br>
+                 2. <span class="highlight">沟通的本质是消费者的感受</span>：品牌要通过符号、意义和差异化建立认知连接，让消费者形成明确印象。`
+    },
+    {
+        id: 12,
+        chapter: "第二章 受众认知与心理",
+        question: "什么是【前景理论】？其包含哪三个核心观点？（理解即可）",
+        answer: `前景理论是关于人们在面对风险和不确定性时如何做出决策的理论，包含：<br>
+                 1. <span class="highlight">参照点</span>：评价取决于相对变化而非绝对财富。<br>
+                 2. <span class="highlight">损失厌恶</span>：失去的痛苦大于同额获得的快乐，其比例大约为 2:1。<br>
+                 3. <span class="highlight">敏感度递减</span>：金额越大，新增变化的感觉越弱（例如：从10元增至20元的感觉远强于从1010元增至1020元）。`
+    },
+    {
+        id: 13,
+        chapter: "第二章 受众认知与心理",
+        question: "什么是前景理论中的【四重模式 - 确定性效应】？（理解即可）",
+        answer: `1. 在<span class="highlight">收益</span>面前，人是<span class="subhighlight">风险厌恶</span>的。<br>
+                 2. 在<span class="highlight">损失</span>面前，人是<span class="subhighlight">风险偏好</span>的。`
+    },
+    {
+        id: 14,
+        chapter: "第二章 受众认知与心理",
+        question: "什么是【禀赋效应】？（理解即可）",
+        answer: `当你拥有一个东西后，你对它的估价会立刻变高。<br>
+                 - 对<span class="highlight">卖家</span>而言，出售该物属于损失，因此卖家的要价往往高于买家的愿付价格。<br>
+                 - 对<span class="highlight">买家</span>而言，购买该物只是获得。`
+    },
+    {
+        id: 15,
+        chapter: "第二章 受众认知与心理",
+        question: "什么是【框架效应】与“系统1”？（理解即可）",
+        answer: `1. <span class="highlight">框架效应</span>：表达方式会影响人们的决策，系统1更倾向于正面词汇。<br>
+                 2. <span class="highlight">系统1</span>：指快速直觉式思维，不太费力，但容易受情绪、印象和表述影响。`
+    },
+    {
+        id: 16,
+        chapter: "第二章 受众认知与心理",
+        question: "什么是【心理账户理论】？其包含哪些内容与延伸？（理解即可）",
+        answer: `1. <span class="highlight">非替代性（特征）</span>：虽然金钱在法律上是等价的，但在人类心理中会被归类到不同意图的“账户”（如生活费、奖金、养老金）。<br>
+                 2. <span class="highlight">交易效用（内容）</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 理论：效用 = 获得效用（物品本身的价值） + 交易效用（购买行为带来的心理满足，即「划算感」）。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 本质：解释了人们为何会为了折扣而购买不需要的商品。<br>
+                 3. <span class="highlight">支付贬值（延伸）</span>：预支付或分期付款会弱化消费时的即时痛苦感，改变消费频次。`
+    },
+    {
+        id: 17,
+        chapter: "第三章 营销战略(重点)",
+        question: "什么是【JTBD】（待完成工作）理论？它的任务结构和营销痛爽痒点如何对应？",
+        answer: `1. <span class="highlight">JTBD真需求</span>：用户不是买产品，而是雇佣产品，帮助自己完成某个特定任务（产品只是工具，任务才是决策的本质）。<br>
+                 2. <span class="highlight">任务的三层结构与营销对应</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">功能性任务</span>（我要把什么事做成） &rarr; 对应 <b>痛点</b><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">情绪性任务</span>（情境中获得什么感受/避免什么痛苦） &rarr; 对应 <b>爽点</b><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">社交性任务</span>（希望别人怎么看我/想呈现的身份） &rarr; 对应 <b>痒点（自我形象）</b>`
+    },
+    {
+        id: 18,
+        chapter: "第三章 营销战略(重点)",
+        question: "什么是【PEST分析】？其各维度代表什么并配以实例？",
+        answer: `PEST分析是用于分析宏观外部环境（选市场-宏观）的工具：<br>
+                 1. <span class="highlight">P (Political) 政治/政策</span>：政策是否稳定，国家是否支持、有无补贴、限制与监管。（例：国家大力支持新能源汽车，则该市场更有发展机会）<br>
+                 2. <span class="highlight">E (Economic) 经济</span>：包括收入水平、物价、利率、汇率、经济增长速度等。（例：看消费者有没有钱买、市场需求是否扩大、成本是否上升）<br>
+                 3. <span class="highlight">S (Social) 社会</span>：人口、文化、生活方式、消费习惯、教育水平等。（例：我国人口老龄化加重，会带动养老、医疗、保健市场的发展）<br>
+                 4. <span class="highlight">T (Technological) 技术</span>：技术是否推动行业升级、是否容易被新技术淘汰、能否降本增效。（例：互联网和AI技术的发展催生了大量新商业机会）`
+    },
+    {
+        id: 19,
+        chapter: "第三章 营销战略(重点)",
+        question: "什么是【波特五力模型】？其所含维度的“具体判定指标”和“威胁”指什么？",
+        answer: `波特五力模型是用于分析行业吸引力和竞争局势的分析工具，其判定指标和威胁为：<br>
+                 1. <span class="highlight">现有竞争者竞争</span>：看同行之间打得厉不厉害。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 判定指标：竞争对手多不多、产品差异大不大、价格战严不严重。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 威胁：竞争越激烈，行业整体利润率通常越低。<br>
+                 2. <span class="highlight">潜在进入者威胁</span>：看新企业容不容易进入。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 判定指标：行业进入门槛高不高、资金/技术/品牌要求高不高、政策是否限制等。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 威胁：新进入者越容易进来，原有企业面临的威胁和潜在压力就越大。<br>
+                 3. <span class="highlight">替代品威胁</span>：看有没有别的产品能替代你。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 判定指标：替代品种类多不多、替代成本高不高、消费者会不会轻易转向别的产品。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 威胁：替代品越强、性价比越高，原有行业的吸引力就越低。<br>
+                 4. <span class="highlight">供应商议价能力</span>：看原材料、技术、设备提供商强不强。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 判定指标：供应商数量多不多、企业是否依赖于少数特定供应商、更换供应商代代价高不高。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 威胁：供应商由于稀缺而越强势，企业原材料等成本就越高，利润空间就越少。<br>
+                 5. <span class="highlight">购买者议价能力</span>：看顾客买单时能不能压低价格。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 判定指标：顾客数量多不多、顾客供选择的竞品多不多、你的产品差异化强不强。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 威胁：顾客议价权越强（如可选多、产品高度同质化），企业定价自由度就越低，利润空间越小。`
+    },
+    {
+        id: 20,
+        chapter: "第三章 营销战略(重点)",
+        question: "什么是【STP分析】？其在“差异化营销”中的具体作用与实例是什么？",
+        answer: `1. <span class="highlight">STP</span>：包括市场细分（S）、目标市场选择（T）、市场定位（P）。其核心作用是<b>明确明确“卖给谁”、“选谁做重点”、“怎么让顾客记住你”</b>。<br>
+                 2. <span class="highlight">S：市场细分（Segmentation）</span>：按地区、人口、心理和行为等标准将市场划分为子市场。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 实例：传统饮料市场细分为儿童、年轻人、健身人群等；“弥勒啤酒”根据消费行为划分出“重度饮酒市场”。<br>
+                 3. <span class="highlight">T：目标市场选择（Targeting）</span>：评估各个细分市场，并抉择最适合重点服务的子市场。（综合考量市场大小、增长率、竞争局势及自身能力）。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 实例：企业决定主打年轻白领人群；“弥勒啤酒”目标市场精准选定“蓝领工人市场”。<br>
+                 4. <span class="highlight">P：市场定位（Positioning）</span>：让产品在顾客心中形成清晰且差异化的形象（定位不等于人群，定位是差异化竞争策略，要给顾客选择你的理由）。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 实例：高端定位或性价比定位。“王老吉”定位“怕上火，就喝王老吉”；“弥勒啤酒”定位“敞开喝，你有多少时间，我们就有多少啤酒”。`
+    },
+    {
+        id: 21,
+        chapter: "第三章 营销战略(重点)",
+        question: "什么是【4P组合】？它包含哪些要素？其落实战略的核心收尾结论是什么？",
+        answer: `4P是把宏观战略转化为市场具体行动措施的重要工具：<br>
+                 1. <span class="highlight">产品（Product）</span>：决定卖什么产品、提供什么价值。核心是满足顾客需求，包含：功能、质量、外包装、品牌、售后服务等。<br>
+                 2. <span class="highlight">定价（Price）</span>：决定卖多少钱。需兼顾顾客接受度与企业合理利润，考虑：成本、需求、竞争对手价格、品牌调性与定位等。<br>
+                 3. <span class="highlight">渠道（Place）</span>：决定通过什么路径把产品送到消费者手中。核心是购买的便利性，考虑：线上/线下、经销商/直营商、配送网络等。<br>
+                 4. <span class="highlight">推广（Promotion）</span>：决定怎样让消费者知晓并刺激购买。提升知名度，考虑：广告、打折、人员推销、公关宣传、自媒体推广等。<br>
+                 5. <span class="highlight">战略收尾结论</span>：<b>企业通过设计合适的产品、制定合理价格、选择有效渠道和开展促销活动，把营销战略真正落实到市场中。</b>`
+    },
+    {
+        id: 22,
+        chapter: "第三章 营销战略(重点)",
+        question: "什么是【SWOT分析】？它的四种组合战略分别指什么并配以实例？",
+        answer: `SWOT用于分析企业自身的优势（S）、劣势（W）等内部因素，以及外部环境的机会（O）、威胁（T）。<br>
+                 其衍生的<span class="highlight">四大组合战略</span>为：<br>
+                 1. <span class="highlight">SO战略（增长型）</span>：内部优势 + 外部机会。利用自身组织优势撬动外部重大机遇。（实例：比亚迪利用电池供应链优势，顺应新能源下乡政策抢占下沉市场）。<br>
+                 2. <span class="highlight">WO战略（扭转型）</span>：内部劣势 + 外部机会。通过扭转克服劣势，以利用外部有利机会。（实例：传统书店面临生存危机，通过追加资金转化为更贴合现代生活方式的“文创社交实体空间”）。<br>
+                 3. <span class="highlight">ST战略（多种经营/防御型）</span>：内部优势 + 外部威胁。巧妙利用组织优势规避外部潜在的威胁。（实例：霸王茶姬利用强大的供应链与标准化高效率优势，化解新茶饮行业健康化及降价狂潮的冲击）。<br>
+                 4. <span class="highlight">WT战略（防御/收缩型）</span>：内部劣势 + 外部威胁。生不逢时，应当及时收缩业务、止损或彻底向其他行业转型。（实例：传统实体纸媒生存受限，整体收缩，向政务新媒体和轻量级自媒体领域转型）。`
+    },
+    {
+        id: 23,
+        chapter: "第三章 营销战略(重点)",
+        question: "【差异化项目流程】包括哪四个阶段？",
+        answer: `1. <span class="highlight">场景定义需求</span>：为什么人解决什么问题（痛点+爽点+痒点、用户画像）？AI+用户洞察提出假设+快速验证。<br>
+                 2. <span class="highlight">价值创新</span>：为什么我的产品能够胜出（战略布局图、价值曲线图）。<br>
+                 3. <span class="highlight">为什么是我来解决</span>：（资源优势、信用背书）。<br>
+                 4. <span class="highlight">用户想起谁</span>：当用户遇到问题的时候，会想到哪个品牌名？想到哪种差异化的品牌定位（品牌和价值标签）。`
+    },
+    {
+        id: 24,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "【场景定义需求】的概念背景是什么？（在做产品定义时如何理解场景与JTBD的关系）",
+        answer: `1. <span class="highlight">场景的本质</span>：在整合营销中，用户的真实需求并不是凭空产生的，而是在具体的使用场景中，为了完成某项“JTBD（待完成工作）”才出现的。<br>
+                 2. <span class="highlight">产品开发的核心理念</span>：人们购买产品不是为了拥有产品本身，而是由于生活中的某项工作出摩擦，雇佣产品来帮助自己解决遇到的场景问题。`
+    },
+    {
+        id: 25,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "在差异化项目流程中，“步骤1：用户洞察：场景视角下寻找摩擦点”的具体做法是什么？",
+        answer: `1. <span class="highlight">提出假设</span>：在做新品开发、营销策划或切入新赛道时，第一步是用'AI+用户洞察'快速提出目标用户、真实需求、产品机会点假设。<br>
+                 2. <span class="highlight">验证假设——两个核心工具</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">a. 观察目标人群，寻找典型情绪触点</span>：寻找他们的情绪摩擦点。结合用户调研、精细访谈及各类互联网热门内容，分析顾客在何时何地因何产生何种情绪和心理动机。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">b. 典型用户体验地图（服务蓝图）</span>：从特定用户视角，按故事线记录他接触和使用服务的全过程并现场观察，包含：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i. <b>人物角色</b>：明确典型客户。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii. <b>目标和预期</b>：他为什么来、期望获得什么。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iii. <b>服务触点</b>：用户旅程中接触的所有服务点。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv. <b>使用路径</b>：用户实现目标的行动主线。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v. <b>情绪曲线</b>：过程中的痛苦点（低谷）或爽点（高峰）。<br>
+                 3. <span class="highlight">核心目的</span>：用真实用户视角判断，目标群体能否顺利实现任务，体验过程到底是难还是易。`
+    },
+    {
+        id: 26,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "在差异化项目流程中，“步骤2：价值创新：战略布局图（价值曲线）”包含哪些核心要素？",
+        answer: `1. <span class="highlight">横轴</span>：客户需求要素。放置客户在购买时最在意的价值要素（如价格、服务质量、速度等客观标准）。<br>
+                 2. <span class="highlight">纵轴</span>：要素表现分值。分值越高，代表在该要素上给客户提供的效用价值越强。<br>
+                 3. <span class="highlight">图例</span>：用于分类对照不同竞争者的折线（如：本企业、竞品A、行业平均水平），用不同颜色、折线类型标识。`
+    },
+    {
+        id: 27,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "什么是蓝海战略中的【四步框架（价值曲线）】？",
+        answer: `用于跳出红海竞争，重塑价值曲线的四步工具：<br>
+                 1. <span class="highlight">剔除</span>：哪些被产业认定的、理所当然的竞争要素需要剔除（应当是市场中被过度竞争的累赘元素）。<br>
+                 2. <span class="highlight">减少</span>：哪些元素的含量应该减少到产业标准以下（减少非核心投入，节约成本）。<br>
+                 3. <span class="highlight">增加</span>：哪些元素的含量应该增加到产业标准以上（加倍强化核心消费者在意的指标）。<br>
+                 4. <span class="highlight">创造</span>：哪些产业从未有过的要素需要被创造出来（行业未涉足但用户有潜在强隐性需求的元素）。`
+    },
+    {
+        id: 28,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "关于【定位（步骤3）】，有什么需要特别注意的警告和核心原则？",
+        answer: `1. <span class="highlight">重要警告</span>：<b>定位绝对不是指人群</b>（人群的选择叫目标市场选择），<b>定位是产品在特定市场中采取的“差异化竞争策略”</b>。<br>
+                 2. <span class="highlight">核心原则</span>：给顾客一个选择你的理由（核心是给产品贴上深入人心、简短明了的价值标签）。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 例子：海飞丝 &rarr; “去头屑”、法拉力 &rarr; “速度”、云噜噜 &rarr; “24小时贴身兽医”。`
+    },
+    {
+        id: 29,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "【降龙十八掌】定位法中，相对于竞争者有哪三种竞争定位方式？其核心第一项是什么？",
+        answer: `降龙十八掌首要指出需<b>1. 卖到核心价值</b>，相对于竞争者的三种定位方式为：<br>
+                 1. <span class="highlight">抢占先位</span>：当某一需求有庞大心智阶梯，且“首位”还是空白时，品牌抢先进入全力卡位、确立领导权。<br>
+                 2. <span class="highlight">关联（比附定位）</span>：如果行业龙头已封顶，就退而求其次建立与其关联（如借名牌提升知名度，甘居第二，让大众先想起老大后即想到你）。<br>
+                 3. <span class="highlight">为领导者重新定位（对抗定位）</span>：抓住行业龙头不可忽视的痛脚或弱点猛攻建立对立面，说服心智转投你的怀抱。`
+    },
+    {
+        id: 30,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "【降龙十八掌】定位法中常见的15个“定位切入点”（价值标签）是什么？（了解）",
+        answer: `用最少的信息点抢占顾客心智的切入点有：<br>
+                 1. <span class="highlight">功能效果</span>（解决痛点） 2. <span class="highlight">品质标准</span>（优良技术/工艺） 3. <span class="highlight">情感</span>（引发关怀共鸣）<br>
+                 4. <span class="highlight">精神理念</span>（打动内心） 5. <span class="highlight">高级群体</span>（利用圈层和优越感） 6. <span class="highlight">第一定位</span>（突出专业及领导优势）<br>
+                 7. <span class="highlight">性价比</span>（物美价廉） 8. <span class="highlight">情调/生活方式</span>（带来精神追求） 9. <span class="highlight">高档次</span>（体现身份尊贵）<br>
+                 10. <span class="highlight">类别定位</span>（划清界限自成新派） 11. <span class="highlight">文化/历史</span>（融入文化内涵修养） 12. <span class="highlight">比附定位</span>（拉大牌抬高自己）<br>
+                 13. <span class="highlight">场景定位</span>（与特定时间空间高度挂钩） 14. <span class="highlight">消费人群定位</span>（人群属性标定） 15. <span class="highlight">形象定位</span>（将品牌本身作为展示品味的代言媒介）`
+    },
+    {
+        id: 31,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "【市场定位】包含哪四个基本步骤？（案例分析的核心大纲步骤）",
+        answer: `1. <span class="highlight">第一步：场景还原</span>：利用JTBD工具彻底还原使用场景，找到待办任务并分析提炼目标消费群的产品价值要素。<br>
+                 2. <span class="highlight">第二步：价值创新</span>：分析竞争对手在各要素指标上的表现分，通过画出对比价值曲线，并套用蓝海战略四步框架谋求创新点。<br>
+                 3. <span class="highlight">第三步：卖点转买点</span>：确立定位切入点，把企业眼中的“卖点”降维并翻译成消费者嘴里的利益和“买点”。<br>
+                 4. <span class="highlight">第四步：4P落地</span>：紧密围绕定位，通过产品研发、定价规则、渠道布局和整合推广手段建立统一的市场形象。`
+    },
+    {
+        id: 32,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "什么是【Kano模型】与【波士顿矩阵】？（了解即可）",
+        answer: `1. <span class="highlight">Kano模型</span>：用来分析顾客产品需求与满意度要素之间的非线性关联关系的模型。<br>
+                 2. <span class="highlight">波士顿矩阵（BCG）</span>：根据相对市场占有率和行业增长率，对企业现存的各条产品业务线进行角色划分和资源配置评估的管理工具。`
+    },
+    {
+        id: 33,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "【案例分析】如何用JTBD对“麻辣味巧克力”进行使用场景还原与子市场特征分析？",
+        answer: `这是用于市场定位前期的深度场景洞察：<br>
+                 1. <span class="highlight">还原具体买家及场景</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">场景A</span>：年轻人逛街、旅游时，纯粹想要尝试一种未见过的创意新奇零食。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">场景B</span>：狐朋好友轰趴聚会，需要一个极具话题度、可用来玩游戏惩罚、制造惊喜和欢笑的媒介。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">场景C</span>：外出旅游买特产送礼，送常规巧克力无趣，想要送具有鲜明地域风味、好玩的伴手礼。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">场景D</span>：重盐重辣重口味爱好者发掘日常新甜品，满足猎奇心理。<br>
+                 2. <span class="highlight">提炼具体待办任务</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">功能</span>：满足口腹欲及味觉辛辣反差刺激。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">社交</span>：聚会破冰、同学游戏惩罚道具、打卡自拍发小红书/朋友圈换赞。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">心理情绪</span>：彰显自我潮人个性、体验肾上腺素飙升的新鲜感与挑战欲。<br>
+                 3. <span class="highlight">不同子市场需求特征深度比对（关键点）</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">对传统大众巧克力而言</span>：其用户更偏爱香甜丝滑的常规美味，购买概率最低。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">对猎奇零食用户而言（核心）</span>：极度反感常规，看重反差萌、猎奇、刺激和自发二次传播性。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">对文创伴手礼用户而言</span>：更看重地方网红标签融合、精致/搞怪的包装设计、送礼物时拿得出手。<br>
+                 4. <span class="highlight">总结用户核心价值要素与结论</span>：新奇感、辛辣味觉、社交话题传播性、地域文创特征、包装潮流辨识、可分享属性。<br>
+                 巧克力本质上是“<b>主打新奇反差刺激的社交型猎奇零食</b>”，潜在核心群是<b>追求刺激、有表达与分享欲的年轻新质消费群体</b>，而非传统高端德芙爱好者。`
+    },
+    {
+        id: 34,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "【案例分析】如何将“麻辣味巧克力”的卖点转换成买点，以此写出其最终定位？",
+        answer: `卖点与买点在企业沟通中存在重大的维度跃迁：<br>
+                 1. <span class="highlight">语言维度的理解</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">卖点（企业维度的自嗨，产品经理语言）</span>：是“麻辣工艺与比利时进口巧克力的创新物理融合、严选川味红油。”<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">买点（客户买单的真理由，用户俗语，注重获得感）</span>：“一口上头、冰火两重天”、“超酷，聚会恶作剧必备。”<br>
+                 2. <span class="highlight">基于卖点转换而来的用户买点</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">企业核心卖点1：火辣辣爆汁，新口味</span> &rarr; <b>转换为用户买点</b>：当你想来点不一样的刺激时，它的每一口都是全新的心跳体验。不仅只是尝甜头，更是一种新生活探险。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">企业核心卖点2：高颜值趣味潮流外包装、适合礼品装</span> &rarr; <b>转换为用户买点</b>：聚会不冷场，拍照发圈绝对吸引点赞；送礼代表你懂新趋势、有品位。<br>
+                 3. <span class="highlight">最终确定定位切入点</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <b>奇体验切入</b>（定位味觉极致反差） + <b>社交场景切入</b>（聚会必选） + <b>地域文创切入</b>（川渝伴手礼）。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <b>最终心智定位</b>：<b>“主打破冰反差萌的社交型创意巧克力”</b>。`
+    },
+    {
+        id: 35,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "【案例分析】如何真正利用 4P 战术建立“麻辣味巧克力”的差异化市场形象？（严禁简写，细节饱满）",
+        answer: `在考卷中必须按照实打实的4P营销方案展开：<br>
+                 1. <span class="highlight">产品战术（Product）</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 推出多梯度的口味谱系，如“微辣爽口”、“中辣流汗”、“变态辣挑战装”，强化试吃趣味性。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 规格上推出小包装尝鲜款和聚餐专用的盲盒互动分享装，内含扑克惩罚牌，让产品变成聚会破冰社交道具。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 包装结合潮玩设计（如国潮川渝文化），增加拍照传播冲动。<br>
+                 2. <span class="highlight">价格战术（Price）</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 特殊创意品类在溢价期决不能走廉价倾销路线，须保留创意和体验溢价。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 精准设置价格锚：便携体验装设低门槛（如9.9元/盒）降低购买阻力；聚会分享款或精装礼盒设高溢价（如58元-88元/盒），锁定高溢价红利。<br>
+                 3. <span class="highlight">渠道战术（Place）</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 线下精准锁定旅游热门景区文创店、创意特产超市（宽窄巷子/洪崖洞）、新零售潮玩店（KKV/九木杂物社）以及网红零食严选集合店。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 线上全方位切入小红书种草小店、抖音直播、微信自营特产商城等新潮社交电商场域，注重短链路拔草。<br>
+                 4. <span class="highlight">推广战术（Promotion）</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 发起线上全民事件营销，制作搞怪反差测评视频、组织“麻辣巧克力极限挑战生存赛”，利用意见领袖（KOL）引发海量用户生成内容（UGC）；<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 配合限时买赠、异业联名（如与新茶饮品牌搞CP）。通过打通在视觉、听觉、社交、事件等接触面的全链路整合激发，一炮而红。`
+    },
+    {
+        id: 36,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "什么是【产品本质】与【产品层次】？怎么下定义？",
+        answer: `1. <span class="highlight">产品本质</span>：就是用户的实际需求。<br>
+                 2. <span class="highlight">产品层次</span>：产品一共划分为以下五个层次：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <b>核心产品、基本产品、期望产品、附加产品、潜在产品</b>。（无需过度去解释每一层次，能记熟它们即可）<br>
+                 3. <span class="highlight">定义公式</span>：<b>产品 = 本质 + 层次</b>。`
+    },
+    {
+        id: 37,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "什么是【产品矩阵分析】？流量品、利润品、形象品分别承担什么角色？",
+        answer: `产品矩阵分析的要点是：让不同的业务线和产品线承担截然不同的营销职能，互相协同、相互导流（引流 &rarr; 转化 &rarr; 盈利 &rarr; 品牌升级）：<br>
+                 1. <span class="highlight">流量品（引流爆款，如冲锋先头兵）</span>：通常采用爆爆品策略，主打极致高性价比，往往利薄。核心定位是充当诱饵，<b>吸引眼球，拉新用户进店</b>，极大地拓展漏斗上游流量。<br>
+                 2. <span class="highlight">利润品（主力销售，如主战中军）</span>：企业实现规模化盈利的关键所在，通常在流量品把广大目标客流引入聚齐后，依靠其<b>提供公司日常主要收入和利润来源</b>，完成销售闭环。<br>
+                 3. <span class="highlight">形象品（旗舰高端，如军中大将）</span>：不以卖货为主，主攻提高调性。核心定位是展示前沿科技、尊贵身份，充当招牌形象，负责<b>拉高品牌档次，搭建顶级信任桩，制造话题</b>。<br>
+                 4. <span class="highlight">三者配合</span>：流量品负责引流、利润品实现常规利润最大化、形象品赋能品牌升空，共同构成护城河。`
+    },
+    {
+        id: 38,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "什么是【产品体验设计】？其核心理论及落地原则是什么？",
+        answer: `1. <span class="highlight">体验设计定义</span>：它是顾客满足需求的过程（产品在使用过程中引发的心理动态），本质上是一连串心智事件的累积，产品本身就是体验的具象载体。<br>
+                 2. <span class="highlight">核心实操原则</span>：<b>最大化调动顾客的五感体验</b>。通过视觉、听觉、嗅觉、触觉以及味觉的全息联动，运用一切外显特征让你的多重卖点“能直接用眼看得见、能顺畅摸得着”，如网红餐饮店上菜时的火炙、特殊声效、手撕摩擦等，制造仪式感。`
+    },
+    {
+        id: 39,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "【交付式产品】与【运营式产品（产品服务化）】的根本逻辑区别？",
+        answer: `在互联网及物联网融合时代，对待产品的开发有两种截然相左的模式逻辑：<br>
+                 1. <span class="highlight">交付式产品</span>：如买常规可乐、买冰箱、买实体书籍等。这类商品只要买卖动作钱款结清、完成物流交付，则企业与该买家的大部分强交互就宣告完结（多属于一锤子买卖）。<br>
+                 2. <span class="highlight">运营式产品</span>：如各类网站、微信App、ChatGPT、造车新势力OTA定期升级车辆等。这类产品哪怕完成上线或卖出后，商业运作和用户维系才刚刚开局。必须依赖实时的使用反馈、社交平台沉淀数据，进行源源不断的螺旋爬升式版本迭代与体验重塑。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">其运营核心</span>：利用高度发达移动社群软硬件、让硬件产品化身为“自带自传播自反馈的媒介”，彻底<b>完成“提供物理产品”到“提供终身虚拟服务”的发展，使用户深层次绑定、提升粘性，挖掘终生资本</b>。`
+    },
+    {
+        id: 40,
+        chapter: "第四章 产品与内容运营(重点)",
+        question: "什么是【内容运营（内容营销）】的三个层次？（案例分析常考的高权重概念）",
+        answer: `内容运营由浅入深分为三个层次，全方位促成与消费者建立长期信任关系：<br>
+                 1. <span class="highlight">第一层：产品开发——产品内容化</span>：在研发初期，直接为产品外包装或内核赋予灵魂故事。诸如为产品设立有温度的原创品牌故事、设计具有巧思文案的创意开箱细节，通过好用兼好玩的内容来大幅提高产品的交付仪式感和超高溢价。<br>
+                 2. <span class="highlight">第二层：品牌建立和传播——广告内容化</span>：坚决反对粗暴刷屏，致力于把避之不及的商业广告包装成消费者乐意自发搜索、全屏欣赏的优秀作品。核心通过巧妙造话题、搞事件策划、引爆热搜、拍摄走心病毒视频或进行走心文案/价值观营销，深刻影响其内在消费偏好。<br>
+                 3. <span class="highlight">第三层：用户持续运营——用户运营社交化（私域运营）</span>：把以往那种建个冷冰冰的群、每日机械私发广告单的坏习惯抛弃，切实通过输出干货科普知识库、孵化大IP、打造亲切专业的人设/虚拟主播模型来保持粘性，全方位激发顾客自己撰写分享心得、自降成本、自建口碑关系（搭建超级拥趸资产池）。`
+    },
+    {
+        id: 41,
+        chapter: "第五章 价格",
+        question: "为什么说价格天然具有极强的“杠杆作用”？其最核心计算公式是什么？",
+        answer: `1. <span class="highlight">价格的强杠杆特征</span>：企业生存最终依靠的是净利润，企业利润往往由价格、销量、成本（固定+可变）三者紧密绑在一起决定。而在所有的4P战术元素中，价格是修改生效最迅速、对利润结果影响最大、无需前期庞大投资就能进行即时变档的终极杠杆。<br>
+                 2. <span class="highlight">杠杆乘法公式</span>：<br>
+                 <span class="subhighlight">利润 = （价格 &times; 销量） - 成本</span>`
+    },
+    {
+        id: 42,
+        chapter: "第五章 价格",
+        question: "什么是【渗透定价法】？其核心定义、优缺点以及适用要求有哪些？",
+        answer: `1. <span class="highlight">定义</span>：新产品首发时走极低定价路线迅速渗透，主攻大规模出货和垄断市场占有率，后续通过大批量的规模效应分摊固定成本并降低供应链变动成本，构筑强竞争护城河防御后来者。<br>
+                 2. <span class="highlight">优势</span>：低价诱惑令社会大众以最快速度认知并接受产品；迅速形成海量销量从而最大比例折叠、摊平研发和生产边际成本，以微利铸就高耸壁垒阻止追赶者抄袭介入。<br>
+                 3. <span class="highlight">劣势</span>：由于价极低，前期毛利率被深度压缩，如果行业爆发未及预期，企业可能承受极长期的财务亏损风险。<br>
+                 4. <span class="highlight">适用要求</span>：对应的消费市群足够宽阔庞大；目标人群买单时对于“价格高低”的敏锐度远高于“对特定品牌的偏执度”；企业本身在制造或服务上有扎实的规模优势；有底气和能力掌控产业链以抵御对手。`
+    },
+    {
+        id: 43,
+        chapter: "第五章 价格",
+        question: "什么是【撇脂定价法】？其核心定义、优缺点以及适用要求有哪些？",
+        answer: `1. <span class="highlight">定义</span>：在新产品发布初期撇去脂肪，制定一个能够承受的高价格以吸干对价格最不敏感的那群“新秀极客/尊贵买家”之高溢价，随后因降落入主流大众消费层，逐步降档，实现分阶段的最大利润索取。（常见于高科技及医药等行业）。<br>
+                 2. <span class="highlight">优势</span>：帮助处于风口期、垄断内测期的新品极速狂揽收回前期巨额的研发宣发投资；高悬的售价能够拉升产品知名度和品牌高级感；能够限制产能爬坡阶段的求过于供现象；为后期可能的战略降级/降价保留广阔的操作退步空间。<br>
+                 3. <span class="highlight">劣势</span>：前期定价过猛，极短时间内就会吸引市场里敏锐的高手跟风模仿，催生出大量廉价替代品分流受众。<br>
+                 4. <span class="highlight">适用要求</span>：产品自身有顶尖的技术壁垒或美学设计突破；企业拥有难以撼动的强势名牌信用背书；研发专利或者重度工艺短期内外部模仿阻力巨大。`
+    },
+    {
+        id: 44,
+        chapter: "第五章 价格",
+        question: "什么是【差别定价（歧视定价）】？其三大核心级别是什么？其优劣势是什么？",
+        answer: `1. <span class="highlight">定义</span>：针对同样的商品，判定不同的消费群体的购买偏好、购买数量、特殊身份（如学生/老人）、地理位置或特殊时间窗，单独制定精细区分的价格阶梯，全方位吸纳所有的“消费者剩余”以提升整体营业额。<br>
+                 2. <span class="highlight">歧视定价的三大阶梯级别</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">一级价格歧视（完美差别定价，看人下菜）</span>：对每一位进门交钱的顾客，都竭尽所能收取其心里最高愿付的单价底线，近乎没有买家能在这里白白便宜一分钱。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">二级价格歧视（按单量或打包，组合歧视）</span>：主要按起批数量开具折扣，买得越多单价越低（如套餐打折、团购阶梯价。注：若逆向二级价格歧视是指由于特供稀有，多买反而更贵）。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">三级价格歧视（按属性精准区别）</span>：完美切分不同的外部市场标签、特定时段（如电影院工作日日场便宜、学生享半价特惠、海外跟本土价格双轨定价制）。<br>
+                 3. <span class="highlight">优势</span>：榨干绝大部分潜在购买商机，获得难以想象的极限销售总额。<br>
+                 4. <span class="highlight">劣势</span>：如果细分隔离手段处理不体面（如大数据杀熟被人看穿），会给品牌声誉造成极惨重的客户信任倒塌；操作识别繁琐。`
+    },
+    {
+        id: 45,
+        chapter: "第六章 渠道跟传播",
+        question: "【渠道】的本质是什么？潜在销售额的公式是什么？",
+        answer: `1. <span class="highlight">渠道的本质</span>：是连接最终交钱的消费者与企业商品的物理或虚拟承载性<span class="subhighlight">「场」</span>。它可能是一间沿街店铺、可能是一次小程序在线看直播的过程，甚至是某种特定的日常出行行为。<br>
+                 2. <span class="highlight">潜在销售额基本公式</span>：<br>
+                 <span class="subhighlight">潜在销售额 = 流量 &times; 转化率 &times; 客单价 &times; 复购率</span><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">流量</span>：所有与你品牌各触点有接触交互的人。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">转化率</span>：在流量中发生付款行为的人群比率（是商业获客效率高低的终极参照物）。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">客单价</span>：一个顾客在单次交易中向企业付钱的均值客单。（通常反映产品层级搭配和连带率表现）。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">复购率</span>：在老客当中，隔日或隔月再度回头下单的客流占比。老客维护成本极低，决定了企业生命周期的长度。`
+    },
+    {
+        id: 46,
+        chapter: "第六章 渠道跟传播",
+        question: "如何帮助渠道提高获取流量的效率或极低成本获客？其“系统级商业模式本质”是什么？",
+        answer: `1. <span class="highlight">商业模式核心本质</span>：<b>渠道的运营提升，核心是人效的爆发，而人的本质就是流量。一切渠道生存的终极规律，实则都是「便宜地吸引流量，加价地出售流量」。所以，降低流量成本（也即降低CAC，降低获客成本）是颠扑不破的真理！</b><br>
+                 2. <span class="highlight">高效率吸纳流量的五大手法</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">「选址逻辑」</span>：选址于用户群重度密集的物理/网络枢纽关卡。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">引流与让利</span>：低价推出不赚钱但高频需求的“引流品”诱惑大众进场。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">激发UGC（裂变逻辑）</span>：设定诱因奖励老用户自发裂变拉新、开启赢得媒体关注。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">「异业联盟」</span>：跨行业找到重度吻合但不构成竞争关系的伙伴共享客户池。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">数字化深耕</span>：依赖数智化精细经营减少沟通阻碍。`
+    },
+    {
+        id: 47,
+        chapter: "第六章 渠道跟传播",
+        question: "在渠道运营中，什么是“场的运营”？",
+        answer: `场的运营在深层次上，是企业在特定时空中将<span class="highlight">资金流、现金流与信息流</span>完成完全无摩擦的精妙闭环融合过程。`
+    },
+    {
+        id: 48,
+        chapter: "第七章 推广策略",
+        question: "广告大纲中，【策略的分类】主要包含哪些？（了解）",
+        answer: `企业的系统策略树，通常根据侧重职能主要囊括以下大分类：<br>
+                 1. <span class="highlight">市场策略</span>（选方向） 2. <span class="highlight">品牌策略</span>（造共识） 3. <span class="highlight">产品策略（服务与包装等）</span>（打磨核心）<br>
+                 4. <span class="highlight">价格策略</span>（控杠杆） 5. <span class="highlight">渠道策略</span>（建交易场） 6. <span class="highlight">推广策略（传播策略）</span><span class="subhighlight">（整合营销期末考核心大考点）</span>`
+    },
+    {
+        id: 49,
+        chapter: "第七章 推广策略",
+        question: "传播的核心工作以及传播策略公式是什么？",
+        answer: `1. <span class="highlight">传播的核心工作</span>：内容生产 + 接触点管理（也即创意与媒体的两手抓）。<br>
+                 2. <span class="highlight">传播策略的核心公式</span>：<br>
+                 <span class="subhighlight">传播策略 = 创意策略 + 媒体策略</span>`
+    },
+    {
+        id: 50,
+        chapter: "第七章 推广策略",
+        question: "广告类型主要有哪几种？编制其预算最常用的是哪四种经典方法？",
+        answer: `1. <span class="highlight">三大经典广告分类：</span><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">告知性广告</span>：偏向新上市，旨在快速扩建知晓率、对奇特产品进行功能解释说明、并全力铺底公司早期高端品牌形象。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">说服性广告</span>：偏向竞争白热化期，核心逼迫客户换投己方阵营、极力重塑对产品独特属性的美言印象、迅速说服顾客线下来店、引爆购买潮流。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">提醒性广告</span>：主要针对成熟期品牌，防止消费者遗忘该品牌、通过节日等持续激发高存在感。<br>
+                 2. <span class="highlight">四大核心预算编制手段：</span><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">量力而为法</span>（口袋里还有多余闲钱，拍脑袋决定投多少）、<span class="subhighlight">销售百分比法</span>（按固定的上季度营业额提成去固定投放比例）、<span class="subhighlight">竞争对等法</span>（盯着主要竞争对手花多少，己方拼死跟投多少）、<span class="subhighlight">目标任务法</span>（根据战略目标反推，量身定制所需费用的科学合理规划，最严谨科学）。`
+    },
+    {
+        id: 51,
+        chapter: "第七章 推广策略",
+        question: "广告创意策略中“说什么（创意策略 - 诉求）”有什么深层区别？",
+        answer: `核心关涉创意如何撬动购买心智：<br>
+                 1. <span class="highlight">理性诉求</span>：主打逻辑推导。客观并全面列举产品的顶级品质、优异性价比、真实应用细节、产地及严密工艺，以便头脑冷静睿智的受众能够进行理智地多方对照，判断是否值得掏钱包（说服脑）。<br>
+                 2. <span class="highlight">感性诉求</span>：主打情绪涟漪。核心是勾连消费者的特定负面（如惊慌、内疚自责、畏惧）或正面（如惊喜幽默、温馨快乐、爱国/归属感）的高维情绪荷尔蒙，驱使非理智状态下的冲动激情购物（引燃心）。`
+    },
+    {
+        id: 52,
+        chapter: "第七章 推广策略",
+        question: "广告创意在“怎么说”执行路径上，常见的九种执行类型是什么？",
+        answer: `让创意高效率落地表达的常见执行模型：<br>
+                 <span class="highlight">「推荐（名人/专家推荐）」</span>、<span class="highlight">「科学证据」</span>、<span class="highlight">「对比」</span>、<span class="highlight">「人物象征」</span>、<span class="highlight">「夸张」</span>、<span class="highlight">「戏剧化（生活化摩擦）」</span>、<span class="highlight">「生活方式」</span>、<span class="highlight">「比喻」</span>以及<span class="highlight">「情调或形象」</span>。`
+    },
+    {
+        id: 53,
+        chapter: "第七章 推广策略",
+        question: "广告的【媒体决策】完整的四步主流程是什么？在挑选主要媒体及具体特定载体时要考量什么？",
+        answer: `1. <span class="highlight">决策四部曲完整闭环</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <b>i. 明确定义范围、频率和效果指标。</b><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <b>ii. 挑选大类主要媒介工具。</b><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <b>iii. 定向选择特定的媒体载体。</b><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <b>iv. 全面统筹决定媒体具体的排期。</b><br>
+                 2. <span class="highlight">选择主要媒体大类时的考量要素</span>：目标特定客群的使用媒介习惯、特定的产品属性形态、具体的创意类型需求与有限的投放成本。<br>
+                 3. <span class="highlight">挑选特定大类里的特定媒体载体时的衡量标尺</span>：受众的契合度高低、受众倾注注意力质量的表现以及媒体本身的内容格调质量与主题相关度。`
+    },
+    {
+        id: 54,
+        chapter: "第七章 推广策略",
+        question: "【促销】的准确定义与核心营销意图是什么？",
+        answer: `1. <span class="highlight">定义</span>：利用折扣、买一赠一、抽奖、代金券等各色各样的短期诱因，刺激消费者迅速购买的推广方式。<br>
+                 2. <span class="highlight">营销核心意图</span>：短期内快速提振业绩从而冲破渠道滞销困局、快速采集一手真实顾客消费表单（拉新、获客名单）、大幅提振短期声量、吸引门店人潮、维护品牌高忠诚度。`
+    },
+    {
+        id: 55,
+        chapter: "第七章 推广策略",
+        question: "什么是【事件营销】？它的核心灵魂、创意策略及主客体关系是什么？",
+        answer: `1. <span class="highlight">定义</span>：围绕有高自发传播潜能、社会性新闻爆发潜力的精妙事件搭建，触发公众与媒体去无偿、主动传播的杠杆武器。<br>
+                 2. <span class="highlight">灵魂核心</span>：<b>对大众给予绝佳的茶余饭后谈资，对媒体塞入极高新闻价值的流量爆点（引爆公信力）。</b><br>
+                 3. <span class="highlight">创意策略</span>：事件本身其实就是营销的全部核心内容，绝非外置，必须深挖情感、极具争议或冲突制造，同时严丝合缝关联企业核心业务标签以顺滑带货。<br>
+                 4. <span class="highlight">传播主体（放大声量）</span>：<b>意见领袖（KOL/网红等）</b>。专责点燃舆论第一炮、煽动大众情绪、提供专业评测，从而打破常规圈层让信息出圈。<br>
+                 5. <span class="highlight">传播客体（爆发内核）</span>：<b>公众。</b> 必须最大化依托低门槛的极易参与互动设计，激励他们生产高质量用户自制内容（UGC），完成从看客向自发二次裂变媒介的转化。`
+    },
+    {
+        id: 56,
+        chapter: "第七章 推广策略",
+        question: "什么是【公共关系（PR）】？其三大核心要素关系、核心职能以及五大常规类型分别是什么？",
+        answer: `1. <span class="highlight">三大核心内生要素（核心关系链条）</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">主体</span>：居于统筹支配地位的社会经济组织，既为公关活动的最初规划方，也是落地执行主力。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">客体</span>：公关活动直接面向、力图发生心意说服的广大社会大众、公众集群。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">中介（桥梁）</span>：高效链接组织（主体）与社会大众（客体）的外部多维大众传播媒体桥梁。<br>
+                 2. <span class="highlight">核心职能</span>：塑造并深度塑造组织完美形象、融洽内外部利益共处环境、深度介入组织高级经营大政决策、强力提升内部团队凝结。对于长周期危机，开展科学危机公关及预案策划。<br>
+                 3. <span class="highlight">五种核心常规PR打法类型</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">1. 宣传型PR</span>：借助日常新闻记者发布会、深度专访、行业大展会推广自身格调、时效强、扩散广。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">2. 交际型PR</span>：依靠高层私人专访、VIP恳谈酒会、定期深度拜访构筑密切信任。信息多路对齐，极富人情味。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">3. 征询型PR</span>：投放深度市场调研、设置投诉反馈热线。确保输入端时刻保持清醒，反应迅速。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">4. 服务型PR</span>：输出专业知识大健康公益讲堂、免费产品维保行动，以身践行拉近社区亲和。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">5. 社会型PR</span>：深度冠名社会公益事业、赞助奥运会等，树立高大社会公民声望。`
+    },
+    {
+        id: 57,
+        chapter: "第七章 推广策略",
+        question: "在【产品生命周期（PLC）】的不同演进期，应如何有机挑选不同推广工具的组合比重？",
+        answer: `生命周期演变必须动态微调战术组合，拒绝一成不变：<br>
+                 1. <span class="highlight">导入期（知晓与入局）</span>：投放适量探路性质的测试广告；重金和注意力放在早期的新闻发布、公共事件营销以及惊艳的产品路演展示。<br>
+                 2. <span class="highlight">成长期（跑马圈地）</span>：狂轰滥炸式的庞大密集广告霸屏攻坚；极力构建有利于本派系阵营发展的公共关系认知局势；策划以吸引首次尝鲜购买为导向的丰富促销动作。<br>
+                 3. <span class="highlight">成熟期（品牌溢价，红海守城）</span>：搭配极为稳重的日常品牌认知广告与温情的长期公关形象投资，铸就死忠粉的品牌忠诚度；倾斜巨量资源开展人员推销等渠道战役，全力锁定超市核心黄金堆头和排架通路优势。<br>
+                 4. <span class="highlight">衰退期（平稳收尾）</span>：大刀阔斧清退绝大多数形象性质的广告投放及大型公关企划；一切以尽快清光冗余库存为绝对纲领，促销打折和店员推销全力甩货返现。`
+    },
+    {
+        id: 58,
+        chapter: "第七章 推广策略",
+        question: "什么是整合营销传播中的【接触点管理】？",
+        answer: `消费者对于特定品牌的整体性认知，绝不是只单单依靠几条电视硬广催生，而是在漫长的生存时空中，逐步在各个物理及虚拟层面的“触点界面”汇聚积淀而来。所以，包括产品独特包装上的字迹摸上去的质量、价格标签的设计风格、线下零售商甚至店员的一言一行等，<b>任何只要有客户与品牌碰面交织界面的地方，全都属于「接触点」，全都必须实施高度一元化的统一视觉与声量控制。</b>`
+    },
+    {
+        id: 59,
+        chapter: "第七章 推广策略",
+        question: "什么是【POE媒体组合】？其定义、最大作用与三种媒体的本质与案例有哪些？",
+        answer: `由Paid付费媒体、Owned自有媒体、Earned赢得媒体三者共同咬合而成的整合媒介投放框架，是保障信息更低成本、超高效穿透心智的黄金模型。三者核心定义如下：<br>
+                 1. <span class="highlight">P-付费媒体（Paid Media，金钱换流量）</span>：花大钱购买第三方的显眼展位和曝光流量。强调<b>基于用户特定的场景进行精确投放</b>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">核心方法</span>：<b>利用“目标对象生活化工具”</b>（即横轴囊括：目标人群、生活状态、时段、出没场景、健康/心理焦虑触发点，纵轴对接各类高契合度媒体触点进行整合爆破）。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">常见案例</span>：朋友圈硬广、抖音大屏信息流、微博超级热搜曝光位、传统电视硬广、百度竞价排名、淘宝直通车等。<br>
+                 2. <span class="highlight">O-自有媒体（Owned Media，产品/官微即媒介）</span>：企业自己牢固定向把控、无需额外多次付费、随时即用的一手主权传播介质：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">核心内涵</span>：自有媒体绝非一个冷冰冰的官网可概括。<b>媒体不单指一个官微平台，它可以指代你的产品本身，乃至任何属于你的资产载体</b>。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">常见案例</span>：企业官方自营微信公众号/视频号/小红书官方号/抖音号、产品本身体面精致的<b>外包装设计</b>、企业运输的货车<b>车身喷绘</b>、员工外勤统一穿着的<b>文化衫</b>、<b>网购包装袋/纸杯套设计</b>、线下直营门店招牌等。<br>
+                 3. <span class="highlight">E-赢得媒体（Earned Media，不花钱换口碑）</span>：绝对不是用钱直接能买飞来的，而是依靠极赞的创意、高话题爆点事件，<b>“赢”回来的社会性公信力推荐以及受众海量自发分享裂变。在该媒体环境下，用户具有双重身份，既是信息的受众，更是拥有裂变散出能量的传播媒体本身</b>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">常见表现及触发点</span>：权威主流媒体记者深度暗访后的主动赞许、自来水群粉丝的刷屏推荐。而<b>触发全民自发点赞并快速自发转发裂变的核心关键只有两个字——【内容】。</b>`
+    },
+    {
+        id: 60,
+        chapter: "第七章 推广策略",
+        question: "企业做【自有媒体（自媒体）】运营通常有哪些大盲目误区？运营的第一、二原则核心指什么？",
+        answer: `1. <span class="highlight">自有媒体运作的三大愚昧误区</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">误区1：把自媒体纯当一个短期战术，从不摆在战略身位</span>。实际：自媒体建设是极高毛利、低获客成本“私域核心流量池”的终身战略，须放长线深耕。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">误区2：把自媒体当个无趣的发稿工具（企业宣传栏）</span>。实际：发推送只是沟通外在动作，它的灵魂在于和屏幕背后的具体用户建立温度连接和共创陪伴。<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">误区3：屁股牢牢坐在本位，绝不换位思考到用户视角</span>。实际：好自媒体的内容衡量尺标永远且只需符合两条高标准：<b>对用户要么极致有用（功能价值高，如避坑攻略），要么极致有趣（引发多巴胺）</b>。<br>
+                 2. <span class="highlight">自媒体深耕的两大黄金运营原则</span>：<br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">原则1</span>：<b>目标特定主流消费者常聚在哪里，你就屁颠屁颠在那个平台安家，开展自媒体阵地运作。</b><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- <span class="subhighlight">原则2</span>：深入剖析产品自身品类属性、对胃口的目标用户生活人设，高度结合各大自媒体网络平台（如抖、微、红、博）的独特内容土壤、算法运营机制去定向挑选、针对性倾斜投入内容创作方案。`
+    },
+    {
+        id: 61,
+        chapter: "第七章 推广策略",
+        question: "在自媒体运营中，抖音、微信、微博、小红书四个不同大流量平台，分别承担什么定位角色？",
+        answer: `四个平台的传播底盘和用户圈层大不相同，须针对性排兵布阵：<br>
+                 1. <span class="highlight">「抖音」—— 扮演【魔术师】角色。</span><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 其为前线最强的爆款产品惊艳大合集利器，专注于通过超极高速、充满视觉和剧情反差、极致戏剧化的视频叙事节奏将产品功能之独特魅力放大至天边，完成超级低门槛的单品秒杀破冰。<br>
+                 2. <span class="highlight">「微信」—— 扮演【品牌大使/知心老友】角色。</span><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 属于私域沉淀并锁死流量的最终地堡。微信服务号及小程序充当“官方专业大使”负责解决复杂的售后和用户深交互，公众号产出有深度的干货、产品背后人文内幕进行长线用户孵化，通过高度紧密的活跃社群和便捷小程序来提供长期的信任连带价值和高效的变现转化复购。<br>
+                 3. <span class="highlight">「微博」—— 扮演【官方发言人】角色。</span><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 承载强大的公众公共媒体广场特征，是各大公众事件爆发的第一吃瓜现场，对于大企业的重大新战略、重组和紧急的外部风波危机事件，企业公关必须第一时间将其作为最权威的官方声量源。主要负责重大事件的官宣、热点造势发声、社会话题引导和破圈互动。<br>
+                 4. <span class="highlight">「小红书」—— 扮演【图片审美与生活种草姬】角色。</span><br>
+                 &nbsp;&nbsp;&nbsp;&nbsp;- 拥有极致的高浓度高黏性精致年轻白领人群，其底层土壤是以超高品质“精致图片/视频排版美学与真诚使用体验测评”为双大核心，是完美的非刚需创意新品之大型种草体验基地，通过精细化布局用户自发拔草测评攻略、极速夯实新消费品牌好口碑的大本营。`
+    },
+    {
+        id: 62,
+        chapter: "第七章 推广策略",
+        question: "在信息过剩、注意力稀缺的时代，更高效触达消费者的传播主顺序是什么？",
+        answer: `1. <span class="highlight">第一步（挑选战场）</span>：选好媒体（选哪一个能无摩擦接触客群）。<br>
+                 2. <span class="highlight">第二步（掌握规则）</span>：用好该媒体对应的算法、平台特质、独特内容玩法。<br>
+                 3. <span class="highlight">第三步（联合作战）</span>：做好复合式的媒体组合（整合好付费、自有、赢得媒体的有机协同）。`
+    }
+];
+
+// ==================== 状态管理 (包含数据存储) ====================
+let userProgress = {}; // 存储格式： { cardId: true/false } true代表掌握，false代表未掌握
+let currentChapter = "";
+let currentSessionQueue = []; // 当前章节正在背诵的卡片队列
+let activeCardIndex = 0;
+
+// 初始化
+function initApp() {
+    loadProgress();
+    renderChapters();
+    updateGlobalProgress();
+    buildListView();
+}
+
+// 加载进度
+function loadProgress() {
+    const saved = localStorage.getItem("humanities_review_progress");
+    if (saved) {
+        userProgress = JSON.parse(saved);
+    } else {
+        // 首次运行，默认都是未掌握
+        DATABASE.forEach(item => {
+            userProgress[item.id] = false;
+        });
+        saveProgress();
+    }
+}
+
+// 保存进度
+function saveProgress() {
+    localStorage.setItem("humanities_review_progress", JSON.stringify(userProgress));
+}
+
+// 重置所有进度
+function resetAllProgress() {
+    if (confirm("确定要重置所有章节的背诵进度吗？一切将重新开始！")) {
+        DATABASE.forEach(item => {
+            userProgress[item.id] = false;
+        });
+        saveProgress();
+        initApp();
+        alert("进度已成功清零！");
+    }
+}
+
+// 获取所有独特章节
+function getChapters() {
+    return [...new Set(DATABASE.map(item => item.chapter))];
+}
+
+// 更新顶部的全局进度条
+function updateGlobalProgress() {
+    const total = DATABASE.length;
+    const mastered = Object.values(userProgress).filter(v => v === true).length;
+    const percent = total > 0 ? Math.round((mastered / total) * 100) : 0;
+    
+    document.getElementById("globalProgressBar").style.width = percent + "%";
+    document.getElementById("globalPercent").innerText = percent + "%";
+    document.getElementById("globalChecked").innerText = mastered;
+    document.getElementById("globalTotal").innerText = total;
+}
+
+// 渲染主菜单章节
+function renderChapters() {
+    const chapters = getChapters();
+    const menuGrid = document.getElementById("menuView");
+    menuGrid.innerHTML = "";
+
+    chapters.forEach(ch => {
+        const chCards = DATABASE.filter(item => item.chapter === ch);
+        const total = chCards.length;
+        const mastered = chCards.filter(item => userProgress[item.id] === true).length;
+        const percent = Math.round((mastered / total) * 100);
+
+        const card = document.createElement("div");
+        card.className = "chapter-card";
+        card.onclick = () => startChapter(ch);
+
+        card.innerHTML = `
+            <div>
+                <h3>${ch}</h3>
+                <div class="global-progress" style="height: 6px; margin-top:5px;">
+                    <div class="global-progress-bar" style="width: ${percent}%; background: ${percent === 100 ? 'var(--success)' : 'var(--primary)'}"></div>
+                </div>
+            </div>
+            <div class="chapter-info">
+                <span>进度：<strong>${percent}%</strong></span>
+                <span class="badge">${mastered}/${total} 掌握</span>
+            </div>
+        `;
+        menuGrid.appendChild(card);
+    });
+}
+
+// ==================== 抽背逻辑 (核心教育机制) ====================
+function startChapter(chapterName) {
+    currentChapter = chapterName;
+    
+    // 提取本章未掌握的卡片
+    const chCards = DATABASE.filter(item => item.chapter === chapterName);
+    currentSessionQueue = chCards.filter(item => userProgress[item.id] === false);
+
+    // 如果全部都已掌握，为了复习，允许全部重新背一遍
+    if (currentSessionQueue.length === 0) {
+        if(confirm("你已经完美通过本关！是否要清空进度重新温习此章节？")) {
+            chCards.forEach(item => userProgress[item.id] = false);
+            saveProgress();
+            currentSessionQueue = [...chCards];
+        } else {
+            return; // 拒绝复习，不进去
+        }
+    }
+
+    // 随机打乱本章背诵顺序 (教育学家推荐：消除顺序依赖)
+    currentSessionQueue.sort(() => Math.random() - 0.5);
+    activeCardIndex = 0;
+
+    // 切换界面
+    document.getElementById("menuView").style.display = "none";
+    document.getElementById("victoryView").style.display = "none";
+    document.getElementById("quizView").style.display = "block";
+    
+    document.getElementById("quizChapterTitle").innerText = chapterName;
+    
+    showCard();
+}
+
+// 展现具体卡片
+function showCard() {
+    if (currentSessionQueue.length === 0) {
+        showVictory();
+        return;
+    }
+
+    if (activeCardIndex >= currentSessionQueue.length) {
+        // 如果一轮结束还有没记住的，重新打乱排队
+        activeCardIndex = 0;
+        currentSessionQueue.sort(() => Math.random() - 0.5);
+    }
+
+    const item = currentSessionQueue[activeCardIndex];
+    
+    // 更新进度指标
+    const chCards = DATABASE.filter(item => item.chapter === currentChapter);
+    const total = chCards.length;
+    const mastered = chCards.filter(item => userProgress[item.id] === true).length;
+    const percent = Math.round((mastered / total) * 100);
+
+    document.getElementById("chapterProgressBar").style.width = percent + "%";
+    document.getElementById("quizProgressCount").innerText = `本章待通关: ${currentSessionQueue.length} 题`;
+
+    // 设定问题
+    document.getElementById("questionText").innerText = item.question;
+    document.getElementById("hintText").style.display = "block";
+    
+    // 隐藏答案
+    document.getElementById("answerArea").style.display = "none";
+    document.getElementById("answerContent").innerHTML = item.answer;
+
+    // 切换控制按钮
+    document.getElementById("btnShow").style.display = "inline-block";
+    document.getElementById("btnWrong").style.display = "none";
+    document.getElementById("btnCorrect").style.display = "none";
+}
+
+// 揭晓答案
+function revealAnswer() {
+    document.getElementById("hintText").style.display = "none";
+    document.getElementById("answerArea").style.display = "block";
+
+    document.getElementById("btnShow").style.display = "none";
+    document.getElementById("btnWrong").style.display = "inline-block";
+    document.getElementById("btnCorrect").style.display = "inline-block";
+}
+
+// 处理用户的记忆反馈
+function handleAnswerFeedback(isCorrect) {
+    const currentItem = currentSessionQueue[activeCardIndex];
+
+    if (isCorrect) {
+        // 1. 判定为掌握：从当前排队队列中移除，并记录在持久化存储中
+        userProgress[currentItem.id] = true;
+        currentSessionQueue.splice(activeCardIndex, 1);
+        // 因为删除了元素，索引不需要递增，指向下一个即可
+    } else {
+        // 2. 判定为没记住：保留在队列中，索引移向下一个（晚点再遇到它）
+        activeCardIndex++;
+    }
+
+    saveProgress();
+    updateGlobalProgress();
+
+    // 展现下一张卡
+    showCard();
+}
+
+// 显示通关大捷
+function showVictory() {
+    document.getElementById("quizView").style.display = "none";
+    document.getElementById("victoryView").style.display = "block";
+    
+    // 刷新一下章节列表
+    renderChapters();
+}
+
+// 退出主单
+function exitQuiz() {
+    document.getElementById("quizView").style.display = "none";
+    document.getElementById("victoryView").style.display = "none";
+    document.getElementById("menuView").style.display = "grid";
+    
+    renderChapters();
+}
+
+// ==================== 考点检索全览表 (辅助快速查阅) ====================
+function toggleListView() {
+    const container = document.getElementById("listViewContainer");
+    if(container.style.display === "none") {
+        container.style.display = "block";
+    } else {
+        container.style.display = "none";
+    }
+}
+
+function toggleListViewDetail() {
+    const list = document.getElementById("allList");
+    const arrow = document.getElementById("arrowIcon");
+    if(list.style.display === "block") {
+        list.style.display = "none";
+        arrow.innerText = "▼";
+    } else {
+        list.style.display = "block";
+        arrow.innerText = "▲";
+    }
+}
+
+function buildListView() {
+    const listDiv = document.getElementById("allList");
+    listDiv.innerHTML = "";
+    
+    DATABASE.forEach((item, index) => {
+        const row = document.createElement("div");
+        row.className = "list-item";
+        row.innerHTML = `
+            <strong>[${item.chapter}] Q${index+1}: ${item.question}</strong>
+            <div style="margin-top: 5px; color: var(--text-light); padding-left: 10px; border-left: 2px solid #ccc;">
+                ${item.answer}
+            </div>
+        `;
+        listDiv.appendChild(row);
+    });
+}
+
+// 页面装载运行
+window.onload = initApp;
+</script>
+
+</body>
+</html>
